@@ -1,3 +1,32 @@
+**NOTES ABOUT THIS REPOSITORY**
+I am not the author of this module, nor of the patches applied to the original basecode. 
+
+I spend a lot of time today trying to get a 10 year old laptop to make it's webcam work on Debian. 
+
+The only driver that work is this one. 
+
+Tested on this device : 
+ 174f:a821 Syntek Web Cam - Packard Bell BU45, PB Easynote MX66-208W
+ 
+It should work for other Syntek based video inputs. 
+
+This code comes from this ArchLinux User Repository https://aur.archlinux.org/packages/stk11xx-svn/
+
+You should be able to buid and install it with the following commands : 
+
+make -f Makefile.standalone
+
+sudo mkdir /lib/modules/$(uname -r)/misc
+sudo cp stk11xx.ko /lib/modules/$(uname -r)/misc/
+sudo depmod
+
+You can modprobe stk11xx to launch it, you should get a /dev/video0 device now.
+
+To change the whitebalance, brightness horizontal/vertical flips, refer to this page  (French) https://doc.ubuntu-fr.org/syntek
+
+Everything is under the GPL, so have fun. 
+
+
 Syntek USB 2.0 Video Camera
 ===========================
 
