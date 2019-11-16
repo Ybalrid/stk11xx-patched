@@ -40,7 +40,7 @@
 #include <linux/kref.h>
 #include <linux/vmalloc.h>
 #include <linux/mm.h>
-
+#include <linux/time.h>
 
 #include <linux/usb.h>
 #include <media/v4l2-common.h>
@@ -1341,7 +1341,19 @@ static long v4l_stk11xx_do_ioctl(struct file *fp,
 				buf->bytesused = dev->view_size;
 				buf->flags = V4L2_BUF_FLAG_MAPPED;
 				buf->field = V4L2_FIELD_NONE;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
 				do_gettimeofday(&buf->timestamp);
+#else
+				//BODGE by Ybalrid : So, on newer Linux kernel, time is 64bit, and the old
+				//interfaces are being deprecated and/or removed.
+				//Instead of using do_gettimeofday, we need to use ktime_get_real_ts64
+				
+				struct timespec64 ts64;
+				ktime_get_real_ts64(&ts64);
+				buf->timestamp.tv_sec = ts64.tv_sec;
+				buf->timestamp.tv_usec = 1000 * ts64.tv_nsec; //nanosec to microsec 
+						
+#endif
 				buf->sequence = 0;
 				buf->memory = V4L2_MEMORY_MMAP;
 				buf->m.offset = dev->fill_image * dev->len_per_image;
